@@ -297,7 +297,12 @@ void SysexComponent::handleSystemMessage(uint8_t item_num, uint8_t item_val)
             
         case SYSTEM_RESTART:
             DBG("restart notification");
-            // update LCD
+            CLEAR_LCD();
+            
+            PLOT_TEXT("restart notification", 10, 40, 300, TEXT_ALIGN_CENTER, TEXT_SIZE_MIDDLE,
+                0, 0, 0,
+                155, 127, 64);
+                      
             break;
     }
 }
