@@ -62,7 +62,9 @@ typedef enum
     ITEM_LED,
     ITEM_ENCODER,
     ITEM_LCD,
-    ITEM_LED_RGB
+    ITEM_LED_RGB,
+    ITEM_PEDAL,
+    ITEM_VOLUME
 } item_type;
 
 //------------------------------------------
