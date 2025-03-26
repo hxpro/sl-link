@@ -15,8 +15,9 @@
 #include "SysexComponent.h"
 
 const uint8_t FATAR_SYSEX_ID[3] { 0x00, 0x20, 0x1A };
-const uint8_t PRODUCT_ID = 0x0E;
-const uint8_t REMOTE_HOST_ID = 0x03; // 0x01 NumaPlayer; 0x02 Camelot; 0x03 MyDevice etc.
+const uint8_t PRODUCT_ID = 0x16;
+const uint8_t HOST_ID = 0x03; // 0x01 NumaPlayer; 0x02 Camelot; 0x03 MyDevice etc.
+const uint8_t DEVICE_ID = 0x00;
 const String MY_DEVICE_NAME = "MY DEVICE";
 
 SysexComponent::SysexComponent()
@@ -77,8 +78,15 @@ void SysexComponent::resized()
 void SysexComponent::sendIdentity()
 {
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage { FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID, REMOTE_HOST_ID };
-    
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
+
     // tipo item System Login
     sysexMessage.push_back(ITEM_SYSTEM_SYSTEM);
     
@@ -115,10 +123,55 @@ void SysexComponent::sendMidiMessage(const MidiMessage& sysMsg)
     queueOut.push_back(sysMsg);
 }
 
+void SysexComponent::sendIcon(uint8_t packet_num)
+{
+    // Start with the manufacturer ID
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
+
+    sysexMessage.push_back(ITEM_SYSTEM_SYSTEM);
+    sysexMessage.push_back(SYSTEM_SEND_ICON);
+    sysexMessage.push_back(packet_num);
+
+    // Based on the packet number we choose the starting row of the image
+    const uint16_t* slice = &(Icon[32 * packet_num * 2]);
+    
+    for (uint16_t i = 0; i < (2*32); i++)
+    {
+        uint8_t msb = slice[i] >> 14;
+        uint8_t mmsb = (slice[i] >> 7) & 0x7F;
+        uint8_t lsb = slice[i] & 0x7F;
+
+        sysexMessage.push_back(msb);
+        sysexMessage.push_back(mmsb);
+        sysexMessage.push_back(lsb);
+    }
+
+    // Making a sysex message, it means to prepend 0xf0 and append 0xf7
+    MidiMessage sysMsg = MidiMessage::createSysExMessage(sysexMessage.data(), int(sysexMessage.size()));
+
+    // Send the message to the MIDI output
+    sendMidiMessage(sysMsg);
+    //DBG("---- Icon " + String(packet_num) + " sent----");
+}
+
 void SysexComponent::logoutRequest()
 {
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage { FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID, REMOTE_HOST_ID };
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // codice per identificare un messaggio di sistema
     sysexMessage.push_back(ITEM_SYSTEM_SYSTEM);
@@ -228,18 +281,21 @@ void SysexComponent::parseMidiInput(const MidiMessage& message)
     uint8_t fatar3 = message.getSysExData()[2];
     uint8_t prodId = message.getSysExData()[3];
     uint8_t hostId = message.getSysExData()[4];
+    //uint8_t deviceId = message.getSysExData()[5];
     
-    // Verify the identity of the message
     if (fatar1 != FATAR_SYSEX_ID[0] ||
         fatar2 != FATAR_SYSEX_ID[1] ||
         fatar3 != FATAR_SYSEX_ID[2] ||
-        prodId != PRODUCT_ID  ||
-        hostId != REMOTE_HOST_ID) return;
-    
+        prodId != PRODUCT_ID ||
+        hostId != HOST_ID)
+    {
+        return;
+    }
+
     // Extract specific elements of the message
-    uint8_t item_id = message.getSysExData()[5];
-    uint8_t item_num = message.getSysExData()[6];
-    uint8_t item_val = message.getSysExData()[7];
+    uint8_t item_id = message.getSysExData()[6];
+    uint8_t item_num = message.getSysExData()[7];
+    uint8_t item_val = message.getSysExData()[8];
     
     // Handle the message elements based on their ID
     switch (item_id)
@@ -271,15 +327,8 @@ void SysexComponent::handleSystemMessage(uint8_t item_num, uint8_t item_val)
             
         case SYSTEM_LOGIN_CONFIRM:
             DBG("login confirmation");
-            // update LCD
-            CLEAR_LCD();
-            
-            PLOT_RECT(0, 0, LCD_WIDTH, 100,
-                      155, 127, 64);
-            PLOT_TEXT("Hello, turn encoder 1", 10, 40, 300, TEXT_ALIGN_CENTER, TEXT_SIZE_MIDDLE,
-                      0, 0, 0,
-                      155, 127, 64);
-            //LED_RGB(LED_RGB_1, COLOUR_ORANGE);
+            drawScreen();
+            sendIcon(0);
             break;
             
         case SYSTEM_LOGOUT_REQUEST:
@@ -297,12 +346,29 @@ void SysexComponent::handleSystemMessage(uint8_t item_num, uint8_t item_val)
             
         case SYSTEM_RESTART:
             DBG("restart notification");
-            CLEAR_LCD();
+            drawScreen();
+            break;
             
-            PLOT_TEXT("restart notification", 10, 40, 300, TEXT_ALIGN_CENTER, TEXT_SIZE_MIDDLE,
-                0, 0, 0,
-                155, 127, 64);
-                      
+        case SYSTEM_LOGIN_RECALL:
+            DBG("login recall");
+            drawScreen();
+            break;
+
+        case SYSTEM_ICON_ACK:
+            DBG("icon ack " + String(item_val));
+            if (item_val < 15)
+            {
+                sendIcon(item_val + 1);
+            }
+            else
+            {
+                drawScreen();
+            }
+            break;
+
+        case SYSTEM_ICON_NACK:
+            DBG("icon ack " + String(item_val));
+            sendIcon(item_val);
             break;
     }
 }
@@ -373,7 +439,7 @@ void SysexComponent::handleEncoderMessage(uint8_t item_num, uint8_t item_val)
         // Maps from [-6, 6] to [0, 12] (i.e. Knob's IIDX)
         int imageIndex = (myEncoderValue + 6);
 
-        PLOT_BITMAP((LCD_WIDTH/2)-30,
+        PLOT_BITMAP(50,
                     LCD_HEIGHT-60,
                     IMG_KNOB_CENTERED,
                     imageIndex,
@@ -396,8 +462,14 @@ void SysexComponent::LED_RGB(uint8_t num, uint8_t r, uint8_t g, uint8_t b, uint8
     b = b >> 1;
     
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage{FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID,
-        REMOTE_HOST_ID};
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo item
     sysexMessage.push_back(ITEM_LED_RGB);
@@ -423,7 +495,14 @@ void SysexComponent::LED_RGB(uint8_t num, uint8_t r, uint8_t g, uint8_t b, uint8
 void SysexComponent::LED_WHITE(uint8_t num, uint8_t state)
 {
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage { FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID, REMOTE_HOST_ID };
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo di item: led
     sysexMessage.push_back(ITEM_LED);
@@ -460,8 +539,14 @@ void SysexComponent::PLOT_TEXT(String text,
     b_back = b_back >> 1;
     
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage{FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID,
-        REMOTE_HOST_ID};
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo di item: display LCD
     sysexMessage.push_back(ITEM_LCD);
@@ -530,8 +615,14 @@ void SysexComponent::PLOT_RECT(uint16_t x,
     b = b >> 1;
     
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage{FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID,
-        REMOTE_HOST_ID};
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo di item: display LCD
     sysexMessage.push_back(ITEM_LCD);
@@ -588,8 +679,14 @@ void SysexComponent::PLOT_BITMAP(uint16_t x,
     b_back = b_back >> 1;
     
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage{FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID,
-        REMOTE_HOST_ID};
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo di item: display LCD
     sysexMessage.push_back(ITEM_LCD);
@@ -637,8 +734,14 @@ void SysexComponent::CLEAR_LCD(uint8_t r, uint8_t g, uint8_t b)
     b = b >> 1;
     
     // Start with the manufacturer ID
-    std::vector<uint8_t> sysexMessage{FATAR_SYSEX_ID[0], FATAR_SYSEX_ID[1], FATAR_SYSEX_ID[2], PRODUCT_ID,
-        REMOTE_HOST_ID};
+    std::vector<uint8_t> sysexMessage {
+        FATAR_SYSEX_ID[0],
+        FATAR_SYSEX_ID[1],
+        FATAR_SYSEX_ID[2],
+        PRODUCT_ID,
+        HOST_ID,
+        DEVICE_ID
+    };
     
     // tipo di item: display LCD
     sysexMessage.push_back(ITEM_LCD);
@@ -656,4 +759,24 @@ void SysexComponent::CLEAR_LCD(uint8_t r, uint8_t g, uint8_t b)
     
     // Send the message to the MIDI output
     sendMidiMessage(sysMsg);
+}
+
+void SysexComponent::drawScreen()
+{
+    CLEAR_LCD();
+
+    PLOT_RECT(0, 0, LCD_WIDTH, 100,
+        155, 127, 64);
+    PLOT_TEXT("Hello device, turn encoder 1", 10, 40, 300,
+              TEXT_ALIGN_CENTER,
+              TEXT_SIZE_MIDDLE,
+              0, 0, 0,
+              155, 127, 64);
+
+    PLOT_RECT(10, 120, 300, 28,
+              11, 111, 111);
+
+    PLOT_BITMAP(277, 197, 0x7F, 0,
+                0, 0, 0,
+                0, 0, 0);
 }
