@@ -19,7 +19,7 @@ All the messages must end with an `F7` byte.
 ### HostID and DeviceID
 
 To avoid conflicts between different application streams of messages, a HostID is granted to manufacturers and software companies that want their products to interface with the SL.  
-The HostID can be requested directly from FATAR/Sudiologic.
+The HostID can be requested directly from FATAR/Sudiologic, while for test applications you can use 7F as a temporary HostID.
 
 For each manufacturer, different products can be developed in order to interact with the SL mk2. These products are identified by the DeviceID.
 
