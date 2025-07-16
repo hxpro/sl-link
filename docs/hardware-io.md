@@ -46,6 +46,8 @@ We present a brief list of the messages presented in this chapter with the direc
 | RGB LED message | `0x05` | Host → SL |
 | Encoder message | `0x03` | Host ← SL |
 | Button message | `0x01` | Host ← SL |
+| Hardware Settings message | `0x06` | Host ↔ SL |
+| Master Volume message | `0x07` | Host ↔ SL |
 
 ## LEDs Message
 
@@ -224,7 +226,7 @@ This message allows the Device to inquire the SL about the current pedal setting
 
 | `F0 00 20 1A 0E HID DID` | `0x06` | HST | `F7` |
 | :---: | :---: | :---: | :---: |
-| Header | ItemType | Button ID |  |
+| Header | ItemType | Hardware Status |  |
 
 It’s a two way message: the Device sends this message to know from the keyboard what is the status of the Pedal Type settings, and the SL mk2 responds with the same message, with the requested info packet in the **HST** byte (Hardware Status).
 
@@ -256,5 +258,21 @@ Moreover the meaning of each bit subgroup is illustrated in the following (with 
 | Pedal 3 | `0b 00xx x1xx` | Pedal 3 SP3-D |
 
 We recall that when a pedal is in Switch mode, it will send only two values of its Channel Voice message: `0x00` representing an OFF value and a `0xF7` representing an ON value.
+
+### Master Volume message
+
+To control the audio board volume a Master Volume message is provided.
+
+| `F0 00 20 1A 0E HID DID` | `0x07` | R/W | VOL | `F7` |
+| :---: | :---: | :---: | :---: | :---: |
+| Header | ItemType | Read/Write | Volume |  |
+
+The message is sent by the Device to the SL mk2, and can be either in a read or write form.
+
+If the Device performs a write the R/W byte must be set to 1 and the VOL byte must contain a value from 0 to 100, and the audio board of the SL mk2 will be set to the desidered value.
+If a value grater than 100 the volume will be set at 100%.
+
+If the Device send a read message the R/W byte is set to 0 and the VOL byte can be omitted.
+The SL mk2 will answer with a read message (byte R/W set to zero) with the VOL byte containing the current audio board volume.
 
 [Back to index](../README.md)
