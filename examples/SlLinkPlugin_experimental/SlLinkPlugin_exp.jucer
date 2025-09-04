@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="DwSth4" name="SlLinkPlugin" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="DwSth4" name="SlLinkPlugin_exp" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginCharacteristicsValue="pluginIsMidiEffectPlugin,pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
-  <MAINGROUP id="VbpTrj" name="SlLinkPlugin">
+  <MAINGROUP id="VbpTrj" name="SlLinkPlugin_exp">
     <GROUP id="{C68A6B20-466E-881F-D741-0AABE5C01264}" name="Source">
       <FILE id="lfCZei" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
