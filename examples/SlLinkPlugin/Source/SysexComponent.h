@@ -213,8 +213,8 @@ public:
     void sendIdentity();
     void logoutRequest();
 
-    int createDeviceID() { return rand() % 0x7F; } // 0x00..0x7F, 0x7F = Omni
-    int deviceID = createDeviceID();
+    String deviceNAME;
+    int deviceID;
     
     // Send Sysex to SL
     //------------------------------------------

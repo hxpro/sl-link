@@ -17,12 +17,15 @@
 const uint8_t FATAR_SYSEX_ID[3] { 0x00, 0x20, 0x1A };
 const uint8_t PRODUCT_ID = 0x16;
 const uint8_t HOST_ID = 0x03; // 0x01 NumaPlayer; 0x02 Camelot; 0x03 MyDevice etc.
-const uint8_t DEVICE_ID = 0x00;
+static uint8_t DEVICE_ID = 0x00;
 const String MY_DEVICE_NAME = "MY DEVICE";
 
 SysexComponent::SysexComponent()
 : audioSetupComp(audioDeviceManager, 0, 0, 0, 0, true, true, false, false)
 {
+    deviceID = ++DEVICE_ID;
+    deviceNAME = MY_DEVICE_NAME + " " + String(deviceID);
+
     addAndMakeVisible(audioSetupComp);
     
     MessageManager::callAsync([&]() mutable
@@ -101,7 +104,7 @@ void SysexComponent::sendIdentity()
      */
     sysexMessage.push_back(SYSTEM_LOGIN_REQUEST);
     
-    String text = MY_DEVICE_NAME;
+    String text = deviceNAME;
     
     // caratteri della stringa
     for (char c : text)
@@ -282,13 +285,14 @@ void SysexComponent::parseMidiInput(const MidiMessage& message)
     uint8_t fatar3 = message.getSysExData()[2];
     uint8_t prodId = message.getSysExData()[3];
     uint8_t hostId = message.getSysExData()[4];
-    //uint8_t deviceId = message.getSysExData()[5];
+    uint8_t deviceId = message.getSysExData()[5];
     
     if (fatar1 != FATAR_SYSEX_ID[0] ||
         fatar2 != FATAR_SYSEX_ID[1] ||
         fatar3 != FATAR_SYSEX_ID[2] ||
         prodId != PRODUCT_ID ||
-        hostId != HOST_ID)
+        hostId != HOST_ID ||
+        deviceId != deviceID)
     {
         return;
     }
@@ -777,7 +781,7 @@ void SysexComponent::drawScreen()
     PLOT_RECT(10, 120, 300, 28,
               11, 111, 111);
 
-    PLOT_BITMAP(277, 197, 0x7F, 0,
-                0, 0, 0,
-                0, 0, 0);
+    // PLOT_BITMAP(277, 197, 0x7F, 0,
+    //             0, 0, 0,
+    //             0, 0, 0);
 }
