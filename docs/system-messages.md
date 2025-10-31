@@ -45,13 +45,13 @@ In this case will be the Device to send a *System Logout Request Message* and th
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | Identification String | String terminator | |
 
-With this message the remote device requests SL-MKII to appear in the list of  *Available Apps* accessible through the ***APP*** button.
+With this message the remote device requests SL-MKII to include it in the list of *Available Apps* accessible through the ***APP*** button.
 
 Each message must contain an identification string, represented by S(N) ASCII bytes, along with its string terminator (`\0` = `0x00`).  
 This string will uniquely identify the sending device in the above mentioned list, and has a maximum length of  32 bytes.
 
 **Note**: This message needs to be sent continuously, for example, every 1 or 2 seconds, also after a *System Login Confirmation* or a *System Login Recall* message is received.  
-If the message is no longer received by SL-MKII, after a certain time (5 seconds), the APP is removed from the list.
+If the message is no longer received by SL-MKII, after a certain time (5 seconds), the APP is removed from the list or logged out.
 
 ### System Login Confirmation
 
