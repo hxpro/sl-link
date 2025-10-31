@@ -79,7 +79,7 @@
 
 ## Daw Group (`0x06`)
 
-For this group two options are present: you can draw the whole icon with the circular border, knowing that the border and the illustration will have the same color, or you can reconstruct the icon drawing the circle of one color (IIDX = 0x07) and drawing the illustration (IIDX from 0x08 to 0x0E) ***with an offset of 5px both in x and y*** of another color.
+For this group two options are present: you can draw the whole icon with the circular border, knowing that the border and the illustration will have the same color, or you can reconstruct the icon drawing the circle with one color (IIDX = 0x07) and drawing the illustration (IIDX from 0x08 to 0x0E) ***with an offset of 5px both in x and y*** and with another color.
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
