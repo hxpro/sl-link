@@ -62,7 +62,7 @@ The message to control them has the **ItemType** set to `0x02`, contains one byt
 
 The message it’s structured as follows:
 
-| `F0 00 20 1A 0E HID DID` | `0x02` | WLID | LST | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x02` | WLID | LST | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | LED ID | LED state |  |
 
@@ -97,7 +97,7 @@ Moreover each RGB LED has an adjustable brightness that affects all of the three
 The associated **ItemType** for the RGB LED message is `0x05`.  
 The RGB LED is selected via **LID** byte ( ranging from 0 to 3 ), the color is set via the **R**, **G**, and **B** bytes while the brightness is controlled with the **BR** byte (ranging from 0 to 127):
 
-| `F0 00 20 1A 0E HID DID` | `0x05` | LID | R | G | B | BR | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x05` | LID | R | G | B | BR | `F7` |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | RGB LED ID | Color Red | Color Green | Color Blue | LED brightness |  |
 
@@ -116,7 +116,7 @@ There are a total of 7 encoders on the SL mk2. The Host Device can receive messa
 The Encoder Messages flow only from the SL mk2 to the Host Device, and must be handled by the recipient.  
 It has the **ItemType** bit set to `0x03`, the encoders are indexed by the **EID** byte, and the encoder rotation is stored in the **TK** byte:
 
-| `F0 00 20 1A 0E HID DID` | `0x03` | EID | TK | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x03` | EID | TK | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | Encoder ID | Tick value |  |
 
@@ -155,7 +155,7 @@ The Button Message has the **ItemType** bit set to `0x01`, the buttons are index
 The Buttons can handle two types of events, called SHORT\_PRESSION (**EVT** \= `0x01`), and LONG\_PRESSION (**EVT** \= `0x02`).  
 If one Button is pressed for more than one second, a LONG\_PRESSION event is sent, while if the pression lasts for less than a second it will send a SHORT\_PRESSION event on its release.The Button Message is structured as follows:
 
-| `F0 00 20 1A 0E HID DID` | 0x01 | BID | EVT | F7 |
+| `F0 00 20 1A 16 HID DID` | 0x01 | BID | EVT | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | Button ID | Event type |  |
 
@@ -224,7 +224,7 @@ For convenience also the messages sent by the two sticks are included:
 
 This message allows the Device to inquire the SL about the current pedal settings:
 
-| `F0 00 20 1A 0E HID DID` | `0x06` | HST | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x06` | HST | `F7` |
 | :---: | :---: | :---: | :---: |
 | Header | ItemType | Hardware Status |  |
 
@@ -263,16 +263,20 @@ We recall that when a pedal is in Switch mode, it will send only two values of i
 
 To control the audio board volume a Master Volume message is provided.
 
-| `F0 00 20 1A 0E HID DID` | `0x07` | R/W | VOL | `F7` |
-| :---: | :---: | :---: | :---: | :---: |
-| Header | ItemType | Read/Write | Volume |  |
+| `F0 00 20 1A 16 HID DID` | `0x07` | R/W | VOL | MUTE | `F7` |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| Header | ItemType | Read/Write | Volume | Mute |  |
 
 The message is sent by the Device to the SL mk2, and can be either in a read or write form.
+In both ways, the MUTE byte contains information the mute status of the audio board, while the VOL one specify the volume of the board.
 
-If the Device performs a write the R/W byte must be set to 1 and the VOL byte must contain a value from 0 to 100, and the audio board of the SL mk2 will be set to the desidered value.
-If a value grater than 100 the volume will be set at 100%.
+If the Device performs a write the R/W byte must be set to 1.
+Every value of MUTE byte different from zero will activate the mute status of the audio board, while sending a MUTE value of zero will unmute the board.
+The VOL byte can take any decimal value between 0 and 100, corresponding to a volume from 0% to 100%. If the SLMK2 receive a value greater than 100 this will be ignored.
+This can be useful if you just need to operate on the MUTE byte without overwriting the current stored volume.
+For retrocompatibility the MUTE byte can be omitted.
 
 If the Device send a read message the R/W byte is set to 0 and the VOL byte can be omitted.
-The SL mk2 will answer with a read message (byte R/W set to zero) with the VOL byte containing the current audio board volume.
+The SL mk2 will answer with a read message (byte R/W set to zero) with the VOL byte containing the current audio board volume and the MUTE one containing the mute/unmute status (respectively 1 or 0).
 
 [Back to index](../README.md)

@@ -4,7 +4,7 @@
 
 Every System Message is identified by the ItemType byte set to `0x00` and each one is distinguished by the **Function** byte.
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | Function | *...message...* | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | Function | *...message...* | `F7` |
 |:---:|:---:|---|---|---|
 | Header | ItemType | | | |
 
@@ -41,7 +41,7 @@ The same messages, but reversed are exchanged when the Device needs to permanent
 In this case will be the Device to send a *System Logout Request Message* and the keyboard to reply with a *System Logout Confirmation Message*.
 
 ### System Login message
-| `F0 00 20 1A 0E HID DID` | `0x00`| `0x00` | S(1)	... S(N) | `0x00` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00`| `0x00` | S(1)	... S(N) | `0x00` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | Identification String | String terminator | |
 
@@ -57,13 +57,45 @@ If the message is no longer received by SL-MKII, after a certain time (5 seconds
 
 The following is one of the two responses to the *System Login Message*:
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x01` | `F7` |
-|:---:|:---:|:---:|:---:|
-| Header | ItemType | Function | |
+[//]: # (| `F0 00 20 1A 16 HID DID` | `0x00` | `0x01` | MAJ MIN REV | SL | `F7` |)
+[//]: # (|:---:|:---:|:---:|:---:|:---:|:---:|)
+[//]: # (| Header | ItemType | Function | Firmware Version | SL Model | |)
+
+<table>
+<thead>
+<tr>
+<th align="center"><code>F0 00 20 1A 16 HID DID</code></th>
+<th align="center"><code>0x00</code></th>
+<th align="center"><code>0x01</code></th>
+<th align="center">MAJ</th>
+<th align="center">MIN</th>
+<th align="center">REV</th>
+<th align="center">SL</th>
+<th align="center"><code>F7</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Header</td>
+<td align="center">ItemType</td>
+<td align="center">Function</td>
+<td colspan="3" align="center">Firmware Version</td>
+<td align="center">SL Model</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 It’s important to understand that this message is only sent when the user, once in APP mode, selects the device to activate the interaction with it.
 
 Moreover this message implies that the keyboard has not stored any icon representing the Device and that this image could be provided (more on that in the [Device Icon Mechanism](#device-icon-mechanism) section).
+
+The message contains the current version of the firmware that is responding to the Device, with the bytes MAJ MIN and REV respectively containing the Major, Minor and Revision version.
+Moreover the SL byte contains the type of SL that is accepting the login request, coded as follows:
+| SL byte | SL model |
+|:---:|:---|
+| `0x00` | SL88 GT |
+| `0x01` | SL88 |
+| `0x02` | SL73 |
 
 Upon receiving this value, the Device should proceed to refresh the display with its contents and can choose to send a personalized icon.
 
@@ -71,7 +103,7 @@ Upon receiving this value, the Device should proceed to refresh the display with
 
 The Device can request to be removed from the APP list by sending the following message:
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x02` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x02` | `F7` |
 |:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | |
 
@@ -83,7 +115,7 @@ When receiving this message, the APP should suspend sending messages and respond
 
 ### System Logout Confirmation Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x03` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x03` | `F7` |
 |:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | |
 
@@ -93,7 +125,7 @@ In the same way the Device sends this message promptly after receiving a *System
 
 ### System Standby Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x04` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x04` | `F7` |
 |:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | |
 
@@ -101,14 +133,12 @@ The System Standby Message is sent from the SL mk2 to the Device when the user p
 
 This message implies that the Device is still logged into the SL mk2, but it has to cease to send messages (although all the SL-Link messages received in this state will be ignored).
 
-The message is structured as follows.
-
 ### System Restart Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x05` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x05` | `F7` |
 |:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | |
-	
+
 This message means that the user returned to the SL-Link mode on the keyboard, and that the Device, that is still logged in the keyboard, can now take control again of the SL mk2.
 
 The *System Restart Message* is always preceded by a *System Standby Message* at some point in time.
@@ -120,13 +150,39 @@ This concerns also the Screen, that has to be fully repopulated by the Device.
 
 This is the second response to the *System Login Message*:
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x06` | `F7` |
-|:---:|:---:|:---:|:---:|
-| Header | ItemType | Function | |
+[//]: # (| `F0 00 20 1A 16 HID DID` | `0x00` | `0x06` | MAJ MIN REV | `SL` | `F7` |)
+[//]: # (|:---:|:---:|:---:|:---:|)
+[//]: # (| Header | ItemType | Function | |)
+<table>
+<thead>
+<tr>
+<th align="center"><code>F0 00 20 1A 16 HID DID</code></th>
+<th align="center"><code>0x00</code></th>
+<th align="center"><code>0x06</code></th>
+<th align="center">MAJ</th>
+<th align="center">MIN</th>
+<th align="center">REV</th>
+<th align="center">SL</th>
+<th align="center"><code>F7</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Header</td>
+<td align="center">ItemType</td>
+<td align="center">Function</td>
+<td colspan="3" align="center">Firmware Version</td>
+<td align="center">SL Model</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 This message has the same function of the *System Login Confirmation Message*: as the previous one is sent when the user selects the device on the Device List to activate the interaction with it.
 
 The difference is that this message implies that an icon is already stored for the given (*HostID*, *DeviceID*) couple, meaning that the Device no longer needs to send it (unless he wants to replace it).
+
+As the *System Login Confirmation Message*, this one contains the firmware version and the SLMK2 keyboard model that is accepting the login.
+
 
 ## Device Icon mechanism
 
@@ -161,7 +217,7 @@ The SL mk2 is capable of storing 1 icon per Device for a total of 10 Devices, an
 
 ### System Send Icon Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x07` | PNUM | `P0A P0B P0C`, `P1A P1B P1C`, ... | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x07` | PNUM | `P0A P0B P0C`, `P1A P1B P1C`, ... | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 Header | ItemType | Function | Packet Num | Pixel 0 data, Pixel 1 data, ... |
 | | | | | 64 Pixels / 194 bytes | |
@@ -208,7 +264,7 @@ The message data starts with the first pixel of the considered row (which is the
 
 ### System Icon Ack Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x08` | PNUM | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x08` | PNUM | `F7` |
 |:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | Packet Number | |
 
@@ -220,7 +276,7 @@ The Device does not have to answer immediately, but can time the *System Send Ic
 
 ### System Icon Nack Message
 
-| `F0 00 20 1A 0E HID DID` | `0x00` | `0x09` | PNUM | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x00` | `0x09` | PNUM | `F7` |
 |:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | Packet Number | |
 

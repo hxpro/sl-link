@@ -1,6 +1,6 @@
 # Appendix A - Bitmap Groups and Icons reference
 
-## Knob Group
+## Knob Group (0x00)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -18,7 +18,7 @@
 | ![](../res/knob-0x0B.png) | `0x00` | `0x0B` | 61px | 54px |
 | ![](../res/knob-0x0C.png) | `0x00` | `0x0C` | 61px | 54px |
 
-## Knob Center Group
+## Knob Center Group (0x01)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -36,14 +36,14 @@
 | ![](../res/knobc-0x0B.png) | `0x01` | `0x0B` | 61px | 54px |
 | ![](../res/knobc-0x0C.png) | `0x01` | `0x0C` | 61px | 54px |
 
-## Toggle Group 
+## Toggle Group (0x02)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
 | ![](../res/toggle-on.png) | `0x02` | `0x00` | 35px | 35px |
 | ![](../res/toggle-off.png) | `0x02` | `0x01` | 35px | 35px |
 
-## Navigation Group
+## Navigation Group (0x03)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -56,7 +56,7 @@
 | ![](../res/navigation-apply.png) | `0x03` | `0x06` | 20px | 20px |
 | ![](../res/navigation-cancel.png) | `0x03` | `0x07` | 20px | 20px |
 
-## Arrow Group
+## Arrow Group (0x04)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -66,7 +66,7 @@
 | ![](../res/arrow-right.png) | `0x04` | `0x03` | 10px | 20px |
 | ![](../res/arrow-left-right.png) | `0x04` | `0x04` | 14px | 10px |
 
-## General Group
+## General Group (0x05)
 
 | | GIDX | IIDX | width | height | 
 | :---: | :---: | :---: | :---: | :---: |
@@ -76,5 +76,28 @@
 | ![](../res/general-keyboard.png) | `0x05` | `0x04` | 16px | 15px |
 | ![](../res/general-volume-off.png) | `0x05` | `0x05` | 16px | 12px |
 | ![](../res/general-volume-on.png) | `0x05` | `0x06` | 16px | 12px |
+
+## Daw Group (0x06)
+
+For this group two options are present: you can draw the whole icon with the circular border, knowing that the border and the illustration will have the same color, or you can reconstruct the icon drawing the circle of one color (IIDX = 0x08) and drawing the illustration with an offset of 5px both in x and y of another color.
+
+| | GIDX | IIDX | width | height | 
+| :---: | :---: | :---: | :---: | :---: |
+| ![](../res/daw_c_play.bmp) | `0x06` | `0x00` | 20px | 20px |
+| ![](../res/daw_c_pause.bmp) | `0x06` | `0x01` | 20px | 20px |
+| ![](../res/daw_c_stop.bmp) | `0x06` | `0x03` | 20px | 20px |
+| ![](../res/daw_c_rec.bmp) | `0x06` | `0x04` | 20px | 20px |
+| ![](../res/daw_c_loop.bmp) | `0x06` | `0x05` | 20px | 20px |
+| ![](../res/daw_c_prev.bmp) | `0x06` | `0x06` | 20px | 20px |
+| ![](../res/daw_c_next.bmp) | `0x06` | `0x07` | 20px | 20px |
+| ![](../res/daw_circle.bmp) | `0x06` | `0x08` | 20px | 20px |
+| ![](../res/daw_play.bmp) | `0x06` | `0x09` | 10px | 10px |
+| ![](../res/daw_pause.bmp) | `0x06` | `0x0A` | 10px | 10px |
+| ![](../res/daw_stop.bmp) | `0x06` | `0x0B` | 10px | 10px |
+| ![](../res/daw_rec.bmp) | `0x06` | `0x0C` | 10px | 10px |
+| ![](../res/daw_loop.bmp) | `0x06` | `0x0D` | 10px | 10px |
+| ![](../res/daw_prev.bmp) | `0x06` | `0x0E` | 10px | 10px |
+| ![](../res/daw_next.bmp) | `0x06` | `0x0F` | 10px | 10px |
+
 
 [Back to index](../README.md)

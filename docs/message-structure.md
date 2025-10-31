@@ -11,10 +11,41 @@ All the SL-Link messages are created appending different commands to a standard 
 
 All the messages must end with an `F7` byte.
 
-| `F0` |`00 20 1A` | `0E` | HID | DID | *...message...* | `F7` | 
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Sysex start | FATAR manufacturer ID | SL product ID | HostID | DeviceID | | Sysex stop | 
-| <td colspan=5>Header |||
+[//]: # (| `F0` |`00 20 1A` | `16` | HID | DID | *...message...* | `F7` | )
+[//]: # (|:---:|:---:|:---:|:---:|:---:|:---:|:---:|)
+[//]: # (| Sysex start | FATAR manufacturer ID | SL product ID | HostID | DeviceID | | Sysex stop | )
+[//]: # (|| <td colspan=5>Header |||)
+
+<table>
+	<thead>
+		<tr>
+			<th align="center"><code>F0</code></th>
+			<th align="center"><code>00 20 1A</code></th>
+			<th align="center"><code>16</code></th>
+			<th align="center">HID</th>
+			<th align="center">DID</th>
+			<th align="center"><em>...message...</em></th>
+			<th align="center"><code>F7</code></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td align="center">Sysex start</td>
+			<td align="center">FATAR manufacturer ID</td>
+			<td align="center">SL product ID</td>
+			<td align="center">HostID</td>
+			<td align="center">DeviceID</td>
+			<td align="center"></td>
+			<td align="center">Sysex stop</td>
+		</tr>
+		<tr>
+			<td align="center"></td>
+			<td align="left" colspan=4>Header</td>
+			<td align="center"></td>
+			<td align="center"></td>
+		</tr>
+	</tbody>
+</table>
 
 ### HostID and DeviceID
 
@@ -33,7 +64,7 @@ The byte that follows the Host ID is called ItemType, and identifies the type of
 The SL-Link messages are grouped in six different categories.  
 Such categories and their specific messages will be addressed in the following sections.
 
-| `F0 00 20 1A 0E HID DID` | ItemType | *...message...* | `F7` |
+| `F0 00 20 1A 16 HID DID` | ItemType | *...message...* | `F7` |
 |:---:|:---:|:---:|:---:|
 | Header | | | |			
 

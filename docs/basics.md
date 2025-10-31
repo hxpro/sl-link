@@ -27,13 +27,13 @@ We will take this for granted during all this guide, so keep in mind that when w
 
 An example of a Sysex message to modify a specific parameter on a synthesizer might look like this: `F0 [00 20 1A] [0E 01] [04 01 00] F7`
 
-| `F0` | `00` : `20` : `1A` | `0E` : `01` | `00` | `04` : `01` : `00` | `F7` |
+| `F0` | `00` : `20` : `1A` | `16` | `01` : `00` | `04` : `01` : `00` | `F7` |
 
 - `F0`: 		Start of the Sysex message;
 - `00 20 1A`: 	Manufacturer identifier (FATAR);
-- `0E`: 		ProductID (i.e. SL-MKII);
+- `16`: 		ProductID (i.e. SL-MKII);
 - `01`: 		HostID (e.g. Studiologic, Audio Modeling, ecc…);
-- `00`:		DeviceID (e.g. Numa Player, Camelot, ecc…);
+- `00`:			DeviceID (e.g. Numa Player, Camelot, ecc…);
 - `04 01 00`: 	Specific data of the message;
 - `F7`: 		End of the Sysex message.
 

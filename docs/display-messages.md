@@ -82,7 +82,7 @@ Color21 RGB24_to_21(uint32_t rgb24)
 
 Every Display Message is identified by the ItemType byte set to `0x04` and each one is distinguished by the *Function* byte.
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | Function | `...message...` | `F7` | 
+| `F0 00 20 1A 16 HID DID` | `0x04` | Function | `...message...` | `F7` | 
 |:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | | | | 
 
@@ -99,7 +99,7 @@ Here is a list of all the display messages with their data flow.
 ## Clear Screen Message
 This message instructs the SL to perform a full monochromatic pain of the canvas.
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | `0x01` | R | G | B | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x04` | `0x01` | R | G | B | `F7` |
 |:---:|:---:|:---:|:---|:---:|:---:|:---|
 | Header | ItemType | Function | Color Red | Color Green | Color Blue | |
 
@@ -111,7 +111,7 @@ If only a small portion of the screen must be updated the use of the Draw Rectan
 
 The Draw Rectangle Message is structured as follow:
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | `0x02` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | HMSB | HLSB | R | G | B | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x04` | `0x02` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | HMSB | HLSB | R | G | B | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Width MSB | Width LSB | Height MSB | Height LSB | Color Red | Color Green | Color Blue | |
 
@@ -137,7 +137,7 @@ The library is organized in Groups, each one containing a list of Icons.
 Each Group is indexed by a 7-bit value, in which the Device can access the proper Icon via another 7-bit index.  
 For each Bitmap, the Device can choose the background and foreground color.
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | `0x03` | XMSB | XLSB | YMSB | YLSB | GIDX | IIDX | FGR | FGG | FGB | BGR | BGG | BGB | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x04` | `0x03` | XMSB | XLSB | YMSB | YLSB | GIDX | IIDX | FGR | FGG | FGB | BGR | BGG | BGB | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Group Index | Icon Index | Foreground red | Foreground green | Foreground blue | Background red | Background green | Background blue | |
 
@@ -166,7 +166,7 @@ A detailed list of Groups and Bitmaps, along with a preview and pixel dimension 
 As explained in the [Device Icon Mechanism](system-messages.md#device-icon-mechanism) section, each Device can store one 32x32 pixel Logo in the SL mk2 RAM.  
 To retrieve the Logo, a special kind of Plot Image message is required:
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | `0x03` | XMLS | XMSB | YMSB | YLSB | `0x7F` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x04` | `0x03` | XMLS | XMSB | YMSB | YLSB | `0x7F` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Logo request | |
 
@@ -191,7 +191,7 @@ This means that the text rendering will replace the underlying pixel data entire
 Finally the string is sent in 7-bit ASCII format, along with its string terminator.  
 The message is structured as follows:
 
-| `F0 00 20 1A 0E HID DID` | `0x04` | `0x00` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | ALIGN | SIZE | FGR | FGG | FGB | BGR | BGG | BGB | S(1) ... S(N) | `0x00` | `F7` |
+| `F0 00 20 1A 16 HID DID` | `0x04` | `0x00` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | ALIGN | SIZE | FGR | FGG | FGB | BGR | BGG | BGB | S(1) ... S(N) | `0x00` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Max width MSB | Max width LSB | Alignment | Size | Fg Red | Fg Green | Fg Blue | Bg red | Bg green | Bg blue | String to write | String terminator | |
 
