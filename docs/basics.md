@@ -2,9 +2,9 @@
 
 ## What are Sysex Messages?
 
-MIDI (Musical Instrument Digital Interface) System Exclusive messages, commonly abbreviated as Sysex, are MIDI messages designed to transmit specific information between MIDI devices from the same manufacturer or model.
+MIDI System Exclusive messages, commonly abbreviated as Sysex, are a special category of MIDI message designed for transmitting proprietary data. These messages allow communication between devices from the same manufacturer or of the same model.
 
-Sysex messages are a special category of MIDI messages that allow the transmission of proprietary data between devices. These messages are not standardized, so their interpretation varies depending on the manufacturer and model of the device.
+Unlike standard MIDI messages, Sysex messages are not universal. Their format and interpretation are entirely determined by the device manufacturer.
 
 ## Structure of Sysex Messages
 
@@ -20,22 +20,23 @@ The FATAR (Studiologic) identifier is `0x00` (byte 0), `0x20` (byte 1) and `0x1A
 
 4. **End-of-message byte**: `0xF7` (247 in decimal).
 
-It’s important to highlight that the **midi standard requires the Most Significant Bit to be zero** for all the bytes, exceptions made for all the MIDI Status bytes and the End-Of-Message byte[^1].
-We will take this for granted during all this guide, so keep in mind that when we refer to a byte we always actually mean 7-bits of data.
+It is important to note that the MIDI standard requires the Most Significant Bit (MSB) to be zero for all data bytes. The only exceptions are MIDI Status bytes and the End-of-Message byte.
+
+We will take this rule for granted throughout this guide. Therefore, whenever we refer to a "byte," we are always referring to 7 bits of data.
 
 ## Example of a Sysex Message
 
-An example of a Sysex message to modify a specific parameter on a synthesizer might look like this: `F0 [00 20 1A] [0E 01] [04 01 00] F7`
+Consider the following Sysex message: `F0 00 20 1A 16 15 E3 04 01 00 F7`.
+<br>This can be broken down as follows:
 
-| `F0` | `00` : `20` : `1A` | `16` | `01` : `00` | `04` : `01` : `00` | `F7` |
+| `F0` | `00` : `20` : `1A` | `16` : `15` : `E3` : `04` : `01` : `00` | `F7` |
 
 - `F0`: 		Start of the Sysex message;
 - `00 20 1A`: 	Manufacturer identifier (FATAR);
-- `16`: 		ProductID (i.e. SL-MKII);
-- `01`: 		HostID (e.g. Studiologic, Audio Modeling, ecc…);
-- `00`:			DeviceID (e.g. Numa Player, Camelot, ecc…);
-- `04 01 00`: 	Specific data of the message;
+- `16 15 E3 04 01 00`: 	Specific data of the message;
 - `F7`: 		End of the Sysex message.
+
+This example identifies a specific SL-Link message that can be decoded using this documentation.
 
 [^1]: For a detailed Sysex and MIDI reference, see [MIDI 1.0 Detailed Specification](https://midi.org/midi-1-0-detailed-specification).
 

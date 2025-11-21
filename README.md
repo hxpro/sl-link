@@ -1,12 +1,13 @@
 # SL Link - Extended Controller API
 
-The SL Link - Extended Controller API provides comprehensive functionality for managing the connection, communication, and display interaction between SL-MKII and the remote device, ensuring optimal performance and user experience.
+The SL Link - Extended Controller API provides comprehensive functionality for managing the connection, communication, and display interaction between SLMK2 and the remote device, ensuring optimal performance and user experience.
 
-The communication protocol employed is MIDI, leveraging the transmission and reception of 'System Exclusive' messages. This approach ensures compatibility and flexibility in data exchange between devices, adhering to MIDI standards while accommodating proprietary functionalities specific to the SL-MKII and the connected remote device.
-The SL mk2 receives and sends SL-LINK messages on the port called “SL LINK” on macOS and MIDIN3/MIDIOUT3 on Windows.
+The communication protocol employed is MIDI, leveraging the transmission and reception of 'System Exclusive' messages. This approach ensures compatibility and flexibility in data exchange between devices, adhering to MIDI standards while accommodating proprietary functionalities specific to the SLMK2 and the connected remote device.
+<br>The SLMK2 receives and sends SL-Link messages on the port called “SL LINK” on macOS and MIDIN3/MIDIOUT3 on Windows.
 
 - [Basics](docs/basics.md)
 - [SL Link message structure](docs/message-structure.md)
+- [Identification Messages](docs/identification-messages.md)
 - [System Messages](docs/system-messages.md)
 - [Display Messages](docs/display-messages.md)
 - [Hardware I/O](docs/hardware-io.md)

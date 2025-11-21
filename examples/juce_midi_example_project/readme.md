@@ -4,9 +4,9 @@ The example uses the JUCE framework for handling the MIDI connection and traffic
 
 ## Smooth and efficient MIDI communication
 
-The connection between the SL-MKII and the device (App) is established via MIDI, making it essential to enable both reception and transmission of MIDI messages. To prevent congestion from excessive messages, the 'pulling' technique is used for both reading and writing.
+The connection between the SLMK2 and the device (App) is established via MIDI, making it essential to enable both reception and transmission of MIDI messages. To prevent congestion from excessive messages, the 'pulling' technique is used for both reading and writing.
 
-The following implementation ensures a smooth and efficient MIDI communication between the SL-MKII and the device, leveraging the 'pulling' technique to manage message flow effectively.
+The following implementation ensures a smooth and efficient MIDI communication between the SLMK2 and the device, leveraging the 'pulling' technique to manage message flow effectively.
 
 In essence, there are two timers, one for input and the other for output, which control the data flow at millisecond intervals.
 
@@ -157,7 +157,7 @@ void parseMidiInput(const MidiMessage& message)
 
 ## MIDI Parse
 
-This example illustrates how to read the values from various controls on the SL-MKII. This logic is applicable to all other control elements as well.
+This example illustrates how to read the values from various controls on the SLMK2. This logic is applicable to all other control elements as well.
 
 ```cpp
 void handleSystemMessage(uint8_t item_num, uint8_t item_val)

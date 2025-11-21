@@ -3,9 +3,9 @@
 In this section, we focus on input/output messages to and from the machine's hardware.  
 Specifically, we refer to the control of LEDs, Encoders, and buttons.
 
-## The SL mk2 Layout
+## The SLMK2 Layout
 
-Before proceeding, a brief presentation of the SL mk2 panel layout, illustrating all the leds and controls available.   
+Before proceeding, a brief presentation of the SLMK2 panel layout, illustrating all the leds and controls available.   
 We indicate with ![](../res/led.png) the presence of an LED in correspondence with a button or an encoder.
 
 The lcd panel appear as follows:
@@ -19,7 +19,7 @@ The lcd panel appear as follows:
 | ![](../res/icon-daw.png) | **Daw** | Daw button. With LED. |
 | ![](../res/icon-apply.png) | **Apply** | Apply button |
 | ![](../res/icon-cancel.png) | **Cancel** | Cancel Button |
-| ![](../res/icon-home.png) | **Home** | Home button. When the SL mk2 is not in SL-Link mode, this button goes back to the main screen. It is recommended to use this in a similar way. |
+| ![](../res/icon-home.png) | **Home** | Home button. When the SLMK2 is not in SL-Link mode, this button goes back to the main screen. It is recommended to use this in a similar way. |
 | ![](../res/joystick.png) | **Joystick** | The Joystick has a builtin encoder and five buttons: one for each direction plus a central main one. |
 
 On the left of the LCD we have the control section, composed by six encoders and four buttons:
@@ -34,7 +34,7 @@ On the left of the LCD we have the control section, composed by six encoders and
 
 ## Hardware I/O messages
 
-The SL-Link protocol allows the Device to receive user interactions with the keyboard’s controllers and provide instant feedback through the activation and coloring of the LEDs on the SL mk2 panel.
+The SL-Link protocol allows the Device to receive user interactions with the keyboard’s controllers and provide instant feedback through the activation and coloring of the LEDs on the SLMK2 panel.
 
 In this chapter, unlike the previous ones, each message is assigned with its own **ItemType**.
 
@@ -51,7 +51,7 @@ We present a brief list of the messages presented in this chapter with the direc
 
 ## LEDs Message
 
-The SL mk2 has 17 LEDs, 4 of which are RGB LEDs (those corresponding to the four zone encoders), 12 are white LEDs (corresponding to buttons and the A and B encoders), and the last one is a red LED that is not controllable via SL-Link.
+The SLMK2 has 17 LEDs, 4 of which are RGB LEDs (those corresponding to the four zone encoders), 12 are white LEDs (corresponding to buttons and the A and B encoders), and the last one is a red LED that is not controllable via SL-Link.
 
 While the white LEDs can only be turned on or off, the RGB ones can be colored as desired and their brightness can vary.
 
@@ -62,7 +62,7 @@ The message to control them has the **ItemType** set to `0x02`, contains one byt
 
 The message it’s structured as follows:
 
-| `F0 00 20 1A 16 HID DID` | `0x02` | WLID | LST | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x02` | WLID | LST | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | LED ID | LED state |  |
 
@@ -97,7 +97,7 @@ Moreover each RGB LED has an adjustable brightness that affects all of the three
 The associated **ItemType** for the RGB LED message is `0x05`.  
 The RGB LED is selected via **LID** byte ( ranging from 0 to 3 ), the color is set via the **R**, **G**, and **B** bytes while the brightness is controlled with the **BR** byte (ranging from 0 to 127):
 
-| `F0 00 20 1A 16 HID DID` | `0x05` | LID | R | G | B | BR | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x05` | LID | R | G | B | BR | `F7` |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | RGB LED ID | Color Red | Color Green | Color Blue | LED brightness |  |
 
@@ -111,12 +111,12 @@ where:
 
 ## Encoder Message
 
-There are a total of 7 encoders on the SL mk2. The Host Device can receive messages from all of them, except from the encoder labeled A on the SL, which controls the overall volume of the USB audio.
+There are a total of 7 encoders on the SLMK2. The Host Device can receive messages from all of them, except from the encoder labeled A on the SL, which controls the overall volume of the USB audio.
 
-The Encoder Messages flow only from the SL mk2 to the Host Device, and must be handled by the recipient.  
+The Encoder Messages flow only from the SLMK2 to the Host Device, and must be handled by the recipient.  
 It has the **ItemType** bit set to `0x03`, the encoders are indexed by the **EID** byte, and the encoder rotation is stored in the **TK** byte:
 
-| `F0 00 20 1A 16 HID DID` | `0x03` | EID | TK | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x03` | EID | TK | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | Encoder ID | Tick value |  |
 
@@ -144,18 +144,18 @@ Moreover, the tick value is 64-centered, meaning that the negative values are al
 
 ## Button Message
 
-Like the Encoder Messages, Button Messages can flow only from the SL mk2 to the Host Device.
+Like the Encoder Messages, Button Messages can flow only from the SLMK2 to the Host Device.
 
 There are a total of 21 buttons, including one push-buttons integrated in each encoder (7 in total), plus four directions of the Joystick Encoder.
 
-The APP button is reserved in order to allow the user to go back to the Control Mode of the SL mk2, and the A Encoder Button is reserved for the USB audio mute/unmute function, leaving the Host Device with the chance to control a total of 19 buttons.
+The APP button is reserved in order to allow the user to go back to the Control Mode of the SLMK2, and the A Encoder Button is reserved for the USB audio mute/unmute function, leaving the Host Device with the chance to control a total of 19 buttons.
 
 The Button Message has the **ItemType** bit set to `0x01`, the buttons are indexed by the **BID** byte, and the encoder rotation is stored in the **EVT** byte.
 
 The Buttons can handle two types of events, called SHORT\_PRESSION (**EVT** \= `0x01`), and LONG\_PRESSION (**EVT** \= `0x02`).  
 If one Button is pressed for more than one second, a LONG\_PRESSION event is sent, while if the pression lasts for less than a second it will send a SHORT\_PRESSION event on its release.The Button Message is structured as follows:
 
-| `F0 00 20 1A 16 HID DID` | 0x01 | BID | EVT | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | 0x01 | BID | EVT | `F7` |
 | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | Button ID | Event type |  |
 
@@ -188,10 +188,10 @@ where:
 
 ## About the MIDI pedals
 
-The SL mk2 is equipped with three pedal inputs, each of which allow different configurations for compatibility with the current hardwares available on the market.  
-The different configurations can be only modified in the SL mk2 Global Configuration, accessible by pressing the Global button while the SL mk2 is in the default Control Mode.
+The SLMK2 is equipped with three pedal inputs, each of which allow different configurations for compatibility with the current hardwares available on the market.  
+The different configurations can be only modified in the SLMK2 Global Configuration, accessible by pressing the Global button while the SLMK2 is in the default Control Mode.
 
-There are six types of pedals supported by the SL mk2, two switch pedals (SwitchA and SwitchB), two expression pedals (ContinuousA and ContinuousB) and the special Studiologic SLP-3D (piano pedal unit).  
+There are six types of pedals supported by the SLMK2, two switch pedals (SwitchA and SwitchB), two expression pedals (ContinuousA and ContinuousB) and the special Studiologic SLP-3D (piano pedal unit).  
 Each pedal input is compatible with a subset of these type of pedals according to the next table:
 
 | Pedal Input | SwitchA | SwitchB | ContinuousA | ContinuousB | SLP-3D |
@@ -224,14 +224,14 @@ For convenience also the messages sent by the two sticks are included:
 
 This message allows the Device to inquire the SL about the current pedal settings:
 
-| `F0 00 20 1A 16 HID DID` | `0x06` | HST | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x06` | HST | `F7` |
 | :---: | :---: | :---: | :---: |
 | Header | ItemType | Hardware Status |  |
 
-It’s a two way message: the Device sends this message to know from the keyboard what is the status of the Pedal Type settings, and the SL mk2 responds with the same message, with the requested info packet in the **HST** byte (Hardware Status).
+It’s a two way message: the Device sends this message to know from the keyboard what is the status of the Pedal Type settings, and the SLMK2 responds with the same message, with the requested info packet in the **HST** byte (Hardware Status).
 
-In the message flowing from the Device to the SL mk2 the **HST** byte can assume any value, and actually it can also be totally omitted.  
-Instead, in the SL mk2 answer, the **HST** byte contain all the required informations.
+In the message flowing from the Device to the SLMK2 the **HST** byte can assume any value, and actually it can also be totally omitted.  
+Instead, in the SLMK2 answer, the **HST** byte contain all the required informations.
 
 Each Pedal is represented by a group of bits in the **HST** byte, according to the next table:
 
@@ -263,11 +263,11 @@ We recall that when a pedal is in Switch mode, it will send only two values of i
 
 To control the audio board volume a Master Volume message is provided.
 
-| `F0 00 20 1A 16 HID DID` | `0x07` | R/W | VOL | MUTE | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x07` | R/W | VOL | MUTE | `F7` |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | Header | ItemType | Read/Write | Volume | Mute |  |
 
-The message is sent by the Device to the SL mk2, and can be either in a read or write form.
+The message is sent by the Device to the SLMK2, and can be either in a read or write form.
 In both ways, the MUTE byte contains information the mute status of the audio board, while the VOL one specify the volume of the board.
 
 If the Device performs a write the R/W byte must be set to 1.
@@ -277,6 +277,6 @@ This can be useful if you just need to operate on the MUTE byte without overwrit
 For retrocompatibility the MUTE byte can be omitted.
 
 If the Device send a read message the R/W byte is set to 0 and the VOL byte can be omitted.
-The SL mk2 will answer with a read message (byte R/W set to zero) with the VOL byte containing the current audio board volume and the MUTE one containing the mute/unmute status (respectively 1 or 0).
+The SLMK2 will answer with a read message (byte R/W set to zero) with the VOL byte containing the current audio board volume and the MUTE one containing the mute/unmute status (respectively 1 or 0).
 
 [Back to index](../README.md)

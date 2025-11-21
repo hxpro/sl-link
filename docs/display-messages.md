@@ -9,7 +9,7 @@ Furthermore the LCD management is particularly resource demanding in terms of co
 
 Before proceeding with a detailed explanation of each Display Message, it is necessary to clarify the functioning of the X and Y coordinate mechanism.
 
-The SL mk2 is equipped with a 320x240 (X,Y) LCD display, with the (0,0) coordinate placed in the upper left corner, and the (319,239) in the lower right corner.
+The SLMK2 is equipped with a 320x240 (X,Y) LCD display, with the (0,0) coordinate placed in the upper left corner, and the (319,239) in the lower right corner.
 
 We already mentioned that the MIDI protocol requires the Most Significant Bit to be set to zero, leaving 7 bits of bandwidth for information.  
 This implies that two bytes per coordinate (four in total) are needed in order to properly communicate one point on the screen.
@@ -48,12 +48,12 @@ MsbLsb SysexManagerNew::get7BitMsbLsb(uint16_t val) {
 ## About the Colors
 
 The most common standard for color coding is the 8-bit per channel, 32-bit RGBA.  
-The SL mk2 does not support the alpha channel, leaving us with 24-bit of data to handle, 8-bit per color.
+The SLMK2 does not support the alpha channel, leaving us with 24-bit of data to handle, 8-bit per color.
 
 As we pointed out above, the MIDI standard requires the use of 7-bits per byte, forcing us to manage the color coding differently.
 
 That said, all the messages that involve colors (all the Display ones but also the RGB LED message), accept 7-bit of data per channel, each in its own Data Byte.  
-This implies a loss in color depth precision, but given the color resolution of the SL mk2 LCD display, no difference will be noticed.
+This implies a loss in color depth precision, but given the color resolution of the SLMK2 LCD display, no difference will be noticed.
 
 The conversion between a 24-bit RGB value can be achieved by keeping the 7-th most significant bit of each channel (in other words shifting one bit right).  
 As an example we show a C function that perform a step-by-step conversion from 24-bit RGB to our 7-bit per channel format:
@@ -82,7 +82,7 @@ Color21 RGB24_to_21(uint32_t rgb24)
 
 Every Display Message is identified by the ItemType byte set to `0x04` and each one is distinguished by the *Function* byte.
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | Function | `...message...` | `F7` | 
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | Function | `...message...` | `F7` | 
 |:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | | | | 
 
@@ -99,7 +99,7 @@ Here is a list of all the display messages with their data flow.
 ## Clear Screen Message
 This message instructs the SL to perform a full monochromatic pain of the canvas.
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | `0x01` | R | G | B | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | `0x01` | R | G | B | `F7` |
 |:---:|:---:|:---:|:---|:---:|:---:|:---|
 | Header | ItemType | Function | Color Red | Color Green | Color Blue | |
 
@@ -111,7 +111,7 @@ If only a small portion of the screen must be updated the use of the Draw Rectan
 
 The Draw Rectangle Message is structured as follow:
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | `0x02` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | HMSB | HLSB | R | G | B | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | `0x02` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | HMSB | HLSB | R | G | B | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Width MSB | Width LSB | Height MSB | Height LSB | Color Red | Color Green | Color Blue | |
 
@@ -137,7 +137,7 @@ The library is organized in Groups, each one containing a list of Icons.
 Each Group is indexed by a 7-bit value, in which the Device can access the proper Icon via another 7-bit index.  
 For each Bitmap, the Device can choose the background and foreground color.
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | `0x03` | XMSB | XLSB | YMSB | YLSB | GIDX | IIDX | FGR | FGG | FGB | BGR | BGG | BGB | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | `0x03` | XMSB | XLSB | YMSB | YLSB | GIDX | IIDX | FGR | FGG | FGB | BGR | BGG | BGB | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Group Index | Icon Index | Foreground red | Foreground green | Foreground blue | Background red | Background green | Background blue | |
 
@@ -163,10 +163,10 @@ A detailed list of Groups and Bitmaps, along with a preview and pixel dimension 
 
 ### Plot Device Icon Message
 
-As explained in the [Device Icon Mechanism](system-messages.md#device-icon-mechanism) section, each Device can store one 32x32 pixel Logo in the SL mk2 RAM.  
+As explained in the [Device Icon Mechanism](system-messages.md#device-icon-mechanism) section, each Device can store one 32x32 pixel Logo in the SLMK2 RAM.  
 To retrieve the Logo, a special kind of Plot Image message is required:
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | `0x03` | XMLS | XMSB | YMSB | YLSB | `0x7F` | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | `0x03` | XMLS | XMSB | YMSB | YLSB | `0x7F` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Logo request | |
 
@@ -189,9 +189,12 @@ Also in this case there is a background and foreground color parameter, and like
 This means that the text rendering will replace the underlying pixel data entirely, without preserving or blending with the previous content.
 
 Finally the string is sent in 7-bit ASCII format, along with its string terminator.  
+It must be noted that the SLMK2 fonts only contain ASCII characters from `0x20` to `0x80` included, and every other character sent will be replaced by a space.  
+For this reason particual care must be taken in handling UNICODE, extended ASCII, or special character, that must be handled bu the Device before sending text to the SLMK2.
+  
 The message is structured as follows:
 
-| `F0 00 20 1A 16 HID DID` | `0x04` | `0x00` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | ALIGN | SIZE | FGR | FGG | FGB | BGR | BGG | BGB | S(1) ... S(N) | `0x00` | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x04` | `0x00` | XMSB | XLSB | YMSB | YLSB | WMSB | WLSB | ALIGN | SIZE | FGR | FGG | FGB | BGR | BGG | BGB | S(1) ... S(N) | `0x00` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 Header | Item Type | Function | X coord MSB | X coord LSB | Y coord MSB | Y coord LSB | Max width MSB | Max width LSB | Alignment | Size | Fg Red | Fg Green | Fg Blue | Bg red | Bg green | Bg blue | String to write | String terminator | |
 
