@@ -16,7 +16,7 @@ One important dynamic of Identification Messages is the one regarding the Device
 With the ***Identification Request*** message, the device must provide an unique, **non zero**, 14-bit ID in order to gain access to the App List via the two DeviceID bytes.  
 The suggested method to do this is to generate two random 7-bit numbers assigned to the two dedicated bytes. 
 In this way, in case the Device is a software, different instances will automatically gain different IDs.  
-Every number is accepted with the exception of the couple (`0x00`, `0x00`)  that is reserved by Studiologic.  
+Every number is accepted with the exception of the couples (`0x00`, `0x00`) and (`0x01`, `0x00`)  that are reserved by Studiologic.  
 
 
 If a DeviceID is already listed in the App Menu, or a reserved Device ID is sent (e.g. `0x00`, `0x00`), an ***Identification Rejected*** message with a Function Byte of `0x00` is sent as a response to the ***Identification Request*** message.  
