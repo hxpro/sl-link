@@ -19,10 +19,10 @@ In this way, in case the Device is a software, different instances will automati
 Every number is accepted with the exception of the couples (`0x00`, `0x00`) and (`0x01`, `0x00`)  that are reserved by Studiologic.  
 
 
-If a DeviceID is already listed in the App Menu, or a reserved Device ID is sent (e.g. `0x00`, `0x00`), an ***Identification Rejected*** message with a Function Byte of `0x00` is sent as a response to the ***Identification Request*** message.  
+If a DeviceID is already listed in the App Menu, or a reserved Device ID is sent (e.g. `0x00`, `0x00`), an ***Identification Rejected*** message with a RSN Byte of `0x00` is sent as a response to the ***Identification Request*** message (see [***Identification Rejected Message***](#identification-rejected-message).  
 In this case the Device must generate a new ID and try the Identification again.
 
-Another case of rejection is when the App List is full, and an ***Identification Rejected*** message with a Function Byte of `0x01` is sent from the SLMK2 to the Device.  
+Another case of rejection is when the App List is full, and an ***Identification Rejected*** message with a RSN Byte of `0x01` is sent from the SLMK2 to the Device.  
 At the moment the list is capped at 10 for the SLMK2, but this number can vary in future firmware updates.
 
 In all other cases an ***Identification Approved*** message is sent, and from this moment on the two 7-bit bytes provided, will identify all the messages from and to the Device.
@@ -46,7 +46,7 @@ Each Identification Message can flow only in one direction, and comprehensive li
 
 ### Identification Request Message
 | `F0 00 20 1A 16` | `ID#1 ID#2` | `0x7F`| `0x00` | S(1)... S(N) | `F7` |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | DeviceID | ItemType | Function | Identification String |  |
 
 With this message the remote device requests SLMK2 to include it in the list of available Apps accessible through the ***APP*** button.
@@ -87,8 +87,8 @@ Upon receiving this value, the Device should proceed to send the ***System Devic
 
 If no more Apps can be listed in the appropriate menu, or the given DeviceID is already present in the App menu, the following message is sent by the SLMK2:
 
-| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x00` | `0x02` | `RSN` | `F7` |
-|:---:|:---:|:---:|:---:|:---:|
+| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x00` | `0x02` | `RSN` | `F7` | 
+|:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | DeviceID | ItemType | Function | Rejection reason| |
 
 The `RSN` bit contains the reason of the rejection:
