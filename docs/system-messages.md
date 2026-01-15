@@ -41,7 +41,7 @@ In this case will be the Device to send a *System Logout Request Message* and th
 
 ### System Device Notification message
 | `F0 00 20 1A 16 ID#1 ID#2` | `0x00`| `0x00` | `F7` |
-|:---:|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|:---:|
 | Header | ItemType | Function | |
 
 With this message the remote device notify its presence in order to mantain its position in the available app list on the SLMK2.
@@ -87,11 +87,12 @@ Moreover this message implies that the keyboard has not stored any icon represen
 
 The message contains the current version of the firmware that is responding to the Device, with the bytes MAJ MIN and REV respectively containing the Major, Minor and Revision version.
 Moreover the SL byte contains the type of SL that is accepting the login request, coded as follows:
-| SL byte | SL model |
-|:---:|:---|
-| `0x00` | SL88 GT |
-| `0x01` | SL88 |
-| `0x02` | SL73 |
+
+| SL byte | SL model | 
+|:---:|:---:| 
+| `0x00` | SL88 GT | 
+| `0x01` | SL88 | 
+| `0x02` | SL73 | 
 
 Upon receiving this value, the Device should proceed to refresh the display with its contents and can choose to send a personalized icon.
 
