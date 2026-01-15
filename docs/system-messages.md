@@ -40,9 +40,9 @@ The same messages, but reversed are exchanged when the Device needs to permanent
 In this case will be the Device to send a *System Logout Request Message* and the keyboard to reply with a *System Logout Confirmation Message*.
 
 ### System Device Notification message
-| `F0 00 20 1A 16 ID#1 ID#2` | `0x00`| `0x00` | `0x00` | `F7` |
+| `F0 00 20 1A 16 ID#1 ID#2` | `0x00`| `0x00` | `F7` |
 |:---:|:---:|:---:|:---:|:---:|
-| Header | ItemType | Function | String terminator | |
+| Header | ItemType | Function | |
 
 With this message the remote device notify its presence in order to mantain its position in the available app list on the SLMK2.
 
