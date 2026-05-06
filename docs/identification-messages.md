@@ -43,6 +43,7 @@ Each Identification Message can flow only in one direction, and comprehensive li
 | Identification Request | `0x00` | Device → SL |
 | Identification Approved | `0x01` | Device ← SL |
 | Identification Rejected | `0x02` | Device ← SL |
+| Identification Query | `0x03` | Device ↔ SL |
 
 ### Identification Request Message
 | `F0 00 20 1A 16` | `ID#1 ID#2` | `0x7F`| `0x00` | S(1)... S(N) | `F7` |
@@ -87,11 +88,11 @@ Upon receiving this value, the Device should proceed to send the ***System Devic
 
 If no more Apps can be listed in the appropriate menu, or the given DeviceID is already present in the App menu, the following message is sent by the SLMK2:
 
-| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x00` | `0x02` | `RSN` | `F7` | 
+| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x7F` | `0x02` | `RSN` | `F7` | 
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Header | DeviceID | ItemType | Function | Rejection reason| |
 
-The `RSN` bit contains the reason of the rejection:
+The `RSN` byte contains the reason of the rejection:
 
 | `RSN` | Reason |
 |:---:|:---:|
@@ -102,5 +103,29 @@ In case RSN = `0x00`, the device must generate a new DeviceID and try another **
 
 In case RSN = `0x01`, the device can try a new ***Identification Request*** later.   
 Note that the SLMK2 will not notify the pending Devices when a slot is freed from the list, and the Device is responsible of checking from time to time.
+
+### Identification Query Message
+
+This message queries the SL to determine whether the DeviceID provided is already identified on the SL.
+The Device is responsible for knowing whether the supplied ID corresponds to (or not) to a previously accepted Identification Request.
+
+The request is structured as follows:
+
+| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x7F` | `0x03` |`F7` | 
+|:---:|:---:|:---:|:---:|:---:|
+| Header | DeviceID | ItemType | Function | |
+
+The SL than respond with this message, containing the requested information
+
+| `F0 00 20 1A 16` | `ID#1 ID#2` | `0x7F` | `0x03` | `IDF` | `F7` | 
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Header | DeviceID | ItemType | Function | Rejection reason| |
+
+The `IDF` byte indicate the identification status:
+
+| `IDF` | Reason |
+|:---:|:---:|
+| `0x00` | DeviceID is not identified on the machine |
+| `0x01` | DeviceID is already identified |
 
 [Back to index](../README.md)
